@@ -66,6 +66,11 @@ echo >&2 "Postgress is up and running on port ${DB_PORT}"
 DATABASE_URL=postgres://${DB_USER}:${DB_PASSWORD}@${DB_HOST}:${DB_PORT}/${DB_NAME}
 export DATABASE_URL
 
+# if RESET_DB is set, drop the database and create a new one
+if [[ -n "${RESET_DB}" ]]; then
+    echo >&2 "Resetting database"
+    sqlx database drop
+fi
 # make db if not made. sqlx will skip if already made
 sqlx database create
 
