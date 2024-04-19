@@ -1,5 +1,3 @@
-#!/bin/zsh
-
 # set debug mode
 set -x
 # set exit on error and find pipe errors
