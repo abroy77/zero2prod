@@ -1,5 +1,6 @@
-use actix_web::{HttpResponse, Responder};
+use actix_files::NamedFile;
 
-pub async fn health_check() -> impl Responder {
-    HttpResponse::Ok().finish()
+pub async fn health_check() -> actix_web::Result<NamedFile> {
+    let path = "static/health_check.html";
+    Ok(NamedFile::open(path)?)
 }
