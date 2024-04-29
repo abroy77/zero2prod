@@ -70,7 +70,7 @@ pub async fn subscribe_returns_200_when_valid_form() {
 }
 
 #[tokio::test]
-pub async fn subscribe_returns_400_when_invalid_form() {
+pub async fn subscribe_returns_400_when_fields_missing() {
     // Arrange
     let test_app = spawn_app().await;
     let client = reqwest::Client::new();
@@ -101,6 +101,37 @@ pub async fn subscribe_returns_400_when_invalid_form() {
     }
 }
 
+#[tokio::test]
+pub async fn subscribe_returns_400_when_fields_are_present_but_invalid() {
+    // Arrange
+    let test_app = spawn_app().await;
+    let client = reqwest::Client::new();
+    let test_cases = [
+        ("name=&email=ursula_le_guin%40gmail.com", "empty name"),
+        ("name=Ursula%20Le%20Guin&email=", "empty email"),
+        ("name=Ursula&email=not-an-email", "invalid email"),
+    ];
+
+    for (invalid_body, error_message) in test_cases {
+        // Act
+        let response = client
+            .post(&format!("{}/subscriptions", &test_app.address))
+            .header("Content-Type", "application/x-www-form-urlencoded")
+            .body(invalid_body)
+            .send()
+            .await
+            .expect("Failed to execute request");
+
+        // Assert
+        assert_eq!(
+            400,
+            response.status().as_u16(),
+            // additional error message when failing on specific case
+            "The API did not return a 400 Bad Request when payload when the payload was {}",
+            error_message
+        );
+    }
+}
 struct TestApp {
     address: String,
     connection_pool: sqlx::PgPool,
