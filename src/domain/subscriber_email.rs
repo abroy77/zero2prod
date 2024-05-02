@@ -1,15 +1,15 @@
+use serde::Deserialize;
 use validator::ValidateEmail;
 
-#[derive(Debug)]
+#[derive(Debug, Deserialize)]
 pub struct SubscriberEmail(String);
 
 impl SubscriberEmail {
     pub fn parse(s: String) -> Result<Self, String> {
         if ValidateEmail::validate_email(&s) {
             return Ok(Self(s));
-        } else {
-        }
-        return Err(format!("{} is not a valid email address", s));
+        } 
+        Err(format!("{} is not a valid email address", s))
     }
 }
 
