@@ -1,5 +1,5 @@
 ---
-application: 
+application:
   port: 8000
 database:
   host: "127.0.0.1"
@@ -7,4 +7,8 @@ database:
   username: "postgres"
   password: "password"
   database_name: "newsletter"
-
+email_client:
+  base_url: "https://127.0.0.1"
+  sender_email: "test@gmail.com"
+  authorization_token: "POSTMARK_API_TOKEN"
+  timeout_milliseconds: 3000
