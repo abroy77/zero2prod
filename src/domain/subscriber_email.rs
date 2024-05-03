@@ -8,7 +8,7 @@ impl SubscriberEmail {
     pub fn parse(s: String) -> Result<Self, String> {
         if ValidateEmail::validate_email(&s) {
             return Ok(Self(s));
-        } 
+        }
         Err(format!("{} is not a valid email address", s))
     }
 }
