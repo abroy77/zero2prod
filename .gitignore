@@ -2,3 +2,4 @@
 /logs
 spec.yaml
 local/
+.DS_Store
