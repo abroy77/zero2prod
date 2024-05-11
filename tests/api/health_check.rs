@@ -16,3 +16,19 @@ async fn health_check_works() {
     assert!(response.status().is_success());
     assert_eq!(Some(370), response.content_length());
 }
+
+#[tokio::test]
+async fn homepage_works() {
+    let test_app = spawn_app().await;
+
+    let client = Client::new();
+
+    let response = client
+        .get(&format!("{}/", &test_app.address))
+        .send()
+        .await
+        .expect("Failed to execute request.");
+
+    assert!(response.status().is_success());
+    assert_eq!(Some(534), response.content_length());
+}

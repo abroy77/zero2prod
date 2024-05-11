@@ -2,6 +2,7 @@ use crate::configuration::DatabaseSettings;
 use crate::configuration::Settings;
 use crate::email_client::EmailClient;
 use crate::routes::health_check;
+use crate::routes::homepage;
 use crate::routes::subscriptions;
 use actix_web::dev::Server;
 use actix_web::{web, App, HttpServer};
@@ -66,6 +67,7 @@ pub fn run(
             .wrap(TracingLogger::default())
             .route("/health_check", web::get().to(health_check::health_check))
             .route("/subscriptions", web::post().to(subscriptions::subscribe))
+            .route("/", web::get().to(homepage::homepage))
             .app_data(connection_pool.clone())
             .app_data(email_client.clone())
     })
