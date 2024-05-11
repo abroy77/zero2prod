@@ -38,6 +38,9 @@ COPY --from=builder /app/target/release/zero2prod zero2prod
 
 COPY configuration configuration
 
+# move static files to the runtime image
+COPY --from=builder /app/static static
+
 ENV APP_ENVIRONMENT production
 
 ENTRYPOINT ["./zero2prod"]
