@@ -75,4 +75,7 @@ sqlx database create
 # run migrations
 sqlx migrate run
 
+# prepare cache
+cargo sqlx prepare
+
 echo >&2 "Postgres has been migrated, ready to go!"
