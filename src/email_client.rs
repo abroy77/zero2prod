@@ -53,8 +53,8 @@ impl EmailClient {
         &self,
         recepient: &SubscriberEmail,
         subject: &str,
-        text_body: &str,
         html_body: &str,
+        text_body: &str,
     ) -> Result<(), EmailClientError> {
         let url = self.base_url.join("/email")?;
 
@@ -62,8 +62,8 @@ impl EmailClient {
             from: self.sender.as_ref(),
             to: recepient.as_ref(),
             subject,
-            text_body,
             html_body,
+            text_body,
         };
 
         self.http_client
@@ -86,8 +86,8 @@ struct SendEmailRequest<'a> {
     from: &'a str,
     to: &'a str,
     subject: &'a str,
-    text_body: &'a str,
     html_body: &'a str,
+    text_body: &'a str,
 }
 
 #[cfg(test)]
