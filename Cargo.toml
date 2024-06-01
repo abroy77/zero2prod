@@ -59,3 +59,4 @@ unicode-segmentation = "1.11.0"
 uuid = { version = "1.8.0", features = ["v4"] }
 validator = "0.18.1"
 url = "2.5.0"
+rand = { version = "0.8.5", features = ["std_rng"] }

@@ -1,0 +1,14 @@
+#! static_spec.yaml
+name: landing
+static_sites:
+  - name: landing
+    github:
+      repo: abroy77/zero2prod
+      branch: master
+      deploy_on_push: true
+    index_document: src/static/homepage.html
+
+domains:
+  - domain: abroy77.co.uk
+    type: PRIMARY
+    wildcard: false
