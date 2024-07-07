@@ -17,6 +17,24 @@ pub enum EmailClientError {
     Reqwest(reqwest::Error),
 }
 
+impl std::fmt::Display for EmailClientError {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        match self {
+            EmailClientError::UrlParseError(e) => write!(f, "Failed to parse URL: {}", e),
+            EmailClientError::Reqwest(e) => write!(f, "Reqwest error: {}", e),
+        }
+    }
+}
+
+impl std::error::Error for EmailClientError {
+    fn source(&self) -> Option<&(dyn std::error::Error + 'static)> {
+        match self {
+            EmailClientError::UrlParseError(e) => Some(e),
+            EmailClientError::Reqwest(e) => Some(e),
+        }
+    }
+}
+
 impl From<reqwest::Error> for EmailClientError {
     fn from(error: reqwest::Error) -> Self {
         EmailClientError::Reqwest(error)
