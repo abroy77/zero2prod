@@ -11,40 +11,13 @@ pub struct EmailClient {
     authorization_token: Secret<String>,
 }
 
-#[derive(Debug)]
+#[derive(Debug, thiserror::Error)]
+
 pub enum EmailClientError {
-    UrlParseError(ParseError),
-    Reqwest(reqwest::Error),
-}
-
-impl std::fmt::Display for EmailClientError {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        match self {
-            EmailClientError::UrlParseError(e) => write!(f, "Failed to parse URL: {}", e),
-            EmailClientError::Reqwest(e) => write!(f, "Reqwest error: {}", e),
-        }
-    }
-}
-
-impl std::error::Error for EmailClientError {
-    fn source(&self) -> Option<&(dyn std::error::Error + 'static)> {
-        match self {
-            EmailClientError::UrlParseError(e) => Some(e),
-            EmailClientError::Reqwest(e) => Some(e),
-        }
-    }
-}
-
-impl From<reqwest::Error> for EmailClientError {
-    fn from(error: reqwest::Error) -> Self {
-        EmailClientError::Reqwest(error)
-    }
-}
-
-impl From<ParseError> for EmailClientError {
-    fn from(error: ParseError) -> Self {
-        EmailClientError::UrlParseError(error)
-    }
+    #[error("Failed to parse URL: {0}")]
+    UrlParseError(#[from] ParseError),
+    #[error("Reqwest error: {0}")]
+    Reqwest(#[from] reqwest::Error),
 }
 
 fn parse_url(s: String) -> Result<Url, String> {
