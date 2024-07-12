@@ -145,10 +145,6 @@ pub async fn subscribe(
     Ok(HttpResponse::Ok().finish())
 }
 
-#[tracing::instrument(
-    name = "Sending confirmation email",
-    skip(email_client, new_subscriber, base_url, subscription_token)
-)]
 pub async fn send_confirmation_email(
     email_client: &EmailClient,
     new_subscriber: NewSubscriber,
@@ -175,10 +171,6 @@ pub async fn send_confirmation_email(
         .await
 }
 
-#[tracing::instrument(
-    name = "Inserting new subscriber into db"
-    skip(transaction,new_subscriber)
-)]
 pub async fn insert_subscriber(
     transaction: &mut Transaction<'_, Postgres>,
     new_subscriber: &NewSubscriber,
@@ -192,17 +184,10 @@ pub async fn insert_subscriber(
         new_subscriber.name.as_ref(),
         Utc::now()
     );
-    transaction.execute(query).await.map_err(|e| {
-        tracing::error!("Failed to execute query: {:?}", e);
-        e
-    })?;
+    transaction.execute(query).await.map_err(|e| e)?;
 
     Ok(subscriber_id)
 }
-#[tracing::instrument(
-    name = "Storing subscription token in db",
-    skip(transaction, subscriber_id)
-)]
 pub async fn store_token(
     transaction: &mut Transaction<'_, Postgres>,
     subscriber_id: Uuid,
@@ -214,10 +199,10 @@ pub async fn store_token(
         subscription_token,
         subscriber_id,
     );
-    transaction.execute(query).await.map_err(|e| {
-        tracing::error!("Failed to execute query: {:?}", e);
-        StoreTokenError(e)
-    })?;
+    transaction
+        .execute(query)
+        .await
+        .map_err(|e| StoreTokenError(e))?;
 
     Ok(subscription_token)
 }
