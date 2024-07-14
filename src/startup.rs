@@ -3,6 +3,7 @@ use crate::configuration::Settings;
 use crate::email_client::EmailClient;
 use crate::routes::health_check;
 use crate::routes::homepage;
+use crate::routes::publish_newsletter;
 use crate::routes::subscriptions;
 use crate::routes::subscriptions_confirm;
 use actix_web::dev::Server;
@@ -90,6 +91,7 @@ pub fn run(
                 web::get().to(subscriptions_confirm::confirm),
             )
             .route("/", web::get().to(homepage::homepage))
+            .route("/newsletters", web::post().to(publish_newsletter))
             .app_data(connection_pool.clone())
             .app_data(email_client.clone())
             .app_data(base_url.clone())

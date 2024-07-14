@@ -21,11 +21,11 @@ pub struct FormData {
 #[error("A database error occurred while trying to store the subscription token")]
 pub struct StoreTokenError(#[source] sqlx::Error);
 
-fn error_chain_fmt(
+pub fn error_chain_fmt(
     e: &impl std::error::Error,
     f: &mut std::fmt::Formatter<'_>,
 ) -> std::fmt::Result {
-    writeln!(f, "{\n}", e)?;
+    writeln!(f, "{}\n", e)?;
     let mut current = e.source();
     while let Some(cause) = current {
         writeln!(f, "Caused by: \n\t{}", cause)?;
@@ -184,7 +184,7 @@ pub async fn insert_subscriber(
         new_subscriber.name.as_ref(),
         Utc::now()
     );
-    transaction.execute(query).await.map_err(|e| e)?;
+    transaction.execute(query).await?;
 
     Ok(subscriber_id)
 }
@@ -199,10 +199,7 @@ pub async fn store_token(
         subscription_token,
         subscriber_id,
     );
-    transaction
-        .execute(query)
-        .await
-        .map_err(|e| StoreTokenError(e))?;
+    transaction.execute(query).await.map_err(StoreTokenError)?;
 
     Ok(subscription_token)
 }
