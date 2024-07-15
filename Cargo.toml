@@ -62,3 +62,4 @@ url = "2.5.0"
 rand = { version = "0.8.5", features = ["std_rng"] }
 thiserror = "1.0.61"
 anyhow = "1.0.86"
+base64 = "0.22.1"

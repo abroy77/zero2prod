@@ -40,22 +40,6 @@ impl std::fmt::Debug for StoreTokenError {
     }
 }
 
-// #[derive(thiserror::Error)]
-// pub enum SubscribeError {
-//     #[error("{0}")]
-//     ValidationError(String),
-//     #[error("Failed to acquire a Postgres connection from the pool")]
-//     PoolError(#[source] sqlx::Error),
-//     #[error("Failed to insert new subscriber into database")]
-//     InsertSubscriberError(#[source] sqlx::Error),
-//     #[error("Failed to commit SQL transaction to store a new subscriber")]
-//     TransactionCommitError(#[source] sqlx::Error),
-//     #[error("Failed to store subscription token")]
-//     StoreTokenError(#[from] StoreTokenError),
-//     #[error("Failed to send confirmation email")]
-//     SendEmailError(#[from] EmailClientError),
-// }
-
 impl ResponseError for SubscribeError {
     fn status_code(&self) -> actix_web::http::StatusCode {
         match self {
