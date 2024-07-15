@@ -64,3 +64,4 @@ thiserror = "1.0.61"
 anyhow = "1.0.86"
 base64 = "0.22.1"
 sha3 = "0.10.8"
+argon2 = { version = "0.5.3", features = ["std"] }

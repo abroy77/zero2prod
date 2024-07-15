@@ -1,3 +1,5 @@
+use reqwest::header::WWW_AUTHENTICATE;
+use uuid::Uuid;
 use wiremock::{
     matchers::{any, method, path},
     Mock, ResponseTemplate,
@@ -163,5 +165,75 @@ async fn requests_missing_authorization_are_rejected() {
     assert_eq!(
         r#"Basic realm="publish""#,
         response.headers()["WWW-Authenticate"]
+    );
+}
+#[tokio::test]
+async fn non_existing_user_is_rejected() {
+    // Arrange
+    let test_app = spawn_app().await;
+    // Random credentials
+    let username = Uuid::new_v4().to_string();
+    let password = Uuid::new_v4().to_string();
+
+    // Act
+    // we use request because we don't want to give it valid creds.
+    // we want to supply the random creds we have just made
+    let response = reqwest::Client::new()
+        .post(format!("{}/newsletters", &test_app.address))
+        .basic_auth(username, Some(password))
+        .json(&serde_json::json!({
+            "title": "Newsletter title",
+            "content": {
+                "text": "Newsletter body as plain text",
+                "html": "<p>Newsletter body as HTML</p>"
+            }
+        }))
+        .send()
+        .await
+        .expect("Failed to execute request");
+
+    // Assert
+
+    // Unauthorized
+    assert_eq!(401, response.status().as_u16());
+    assert_eq!(
+        r#"Basic realm="publish""#,
+        response.headers()[WWW_AUTHENTICATE]
+    );
+}
+
+#[tokio::test]
+async fn invalid_password_is_rejected() {
+    // Arrange
+    let test_app = spawn_app().await;
+    // get test username
+    let username = &test_app.test_user.username;
+    // Generate random password
+    let password = Uuid::new_v4().to_string();
+
+    // Act
+    // we use request because we don't want to give it valid creds.
+    // we want to supply the random creds we have just made
+    let response = reqwest::Client::new()
+        .post(format!("{}/newsletters", &test_app.address))
+        .basic_auth(username, Some(password))
+        .json(&serde_json::json!({
+            "title": "Newsletter title",
+            "content": {
+                "text": "Newsletter body as plain text",
+                "html": "<p>Newsletter body as HTML</p>"
+            }
+        }))
+        .send()
+        .await
+        .expect("Failed to execute request");
+
+    // Assert
+
+    // Unauthorized
+    assert_eq!(401, response.status().as_u16());
+    assert_eq!(
+        r#"Basic realm="publish""#,
+        response.headers()[WWW_AUTHENTICATE]
     );
 }
